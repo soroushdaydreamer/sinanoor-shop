@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود به پنل مدیریت | سینا نور</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <h1>پنل مدیریت سینا نور</h1>
+      <p>با شماره موبایل و رمز عبور مدیر وارد شوید</p>
+      <p class="form-error" id="loginError"></p>
+      <form id="loginForm">
+        <input class="field" name="phone" type="tel" inputmode="numeric" placeholder="0912xxxxxxx" maxlength="11" required>
+        <input class="field" name="password" type="password" placeholder="رمز عبور" required>
+        <button type="submit" class="btn btn-primary" style="width:100%">ورود</button>
+      </form>
+    </div>
+  </div>
+
+  <script>window.SINA_NOOR_API_BASE = "http://api.sinanoor.cyou";</script>
+  <script src="js/api.js"></script>
+  <script>
+    if (api.isLoggedIn()) window.location.href = "index.html";
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errEl = document.getElementById('loginError');
+      errEl.textContent = '';
+      const fd = new FormData(e.target);
+      try {
+        const data = await api.login(fd.get('phone').trim(), fd.get('password'));
+        if (data.user.role !== 'admin') {
+          errEl.textContent = 'این حساب دسترسی مدیریت ندارد.';
+          return;
+        }
+        api.setToken(data.token);
+        api.setUser(data.user);
+        window.location.href = 'index.html';
+      } catch (err) {
+        errEl.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

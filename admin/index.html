@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>پنل مدیریت | سینا نور</title>
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo">💡 سینا نور — ادمین</div>
+      <nav>
+        <a href="#products" data-tab="products">محصولات</a>
+        <a href="#categories" data-tab="categories">دسته‌بندی‌ها</a>
+        <a href="#orders" data-tab="orders">سفارش‌ها</a>
+        <a href="#users" data-tab="users">کاربران</a>
+      </nav>
+      <a href="#" class="logout" id="logoutBtn">خروج از حساب</a>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <h1 id="pageTitle">محصولات</h1>
+        <div class="who" id="whoAmI"></div>
+      </div>
+      <div id="content"><div class="empty">در حال بارگذاری...</div></div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modalBox"></div>
+  </div>
+
+  <script>window.SINA_NOOR_API_BASE = "http://api.sinanoor.cyou";</script>
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

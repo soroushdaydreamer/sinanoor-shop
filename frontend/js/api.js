@@ -1,0 +1,44 @@
+// کلاینت ساده برای ارتباط با API بک‌اند (Cloudflare Workers)
+// آدرس API را قبل از انتشار نهایی با دامنه‌ی واقعی خودتان جایگزین کنید.
+const API_BASE = window.SINA_NOOR_API_BASE || "https://api.sinanoor.com";
+
+function getToken() { return localStorage.getItem("sn_token"); }
+function setToken(t) { localStorage.setItem("sn_token", t); }
+function clearToken() { localStorage.removeItem("sn_token"); localStorage.removeItem("sn_user"); }
+function getUser() {
+  try { return JSON.parse(localStorage.getItem("sn_user") || "null"); } catch { return null; }
+}
+function setUser(u) { localStorage.setItem("sn_user", JSON.stringify(u)); }
+
+async function apiFetch(path, options = {}) {
+  const headers = { "Content-Type": "application/json", ...(options.headers || {}) };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  let data;
+  try { data = await res.json(); } catch { data = { ok: false, error: "پاسخ نامعتبر از سرور" }; }
+  if (!res.ok || data.ok === false) throw new Error(data.error || "خطایی رخ داد");
+  return data;
+}
+
+const api = {
+  register: (name, phone, password) =>
+    apiFetch("/api/auth/register", { method: "POST", body: JSON.stringify({ name, phone, password }) }),
+  login: (phone, password) =>
+    apiFetch("/api/auth/login", { method: "POST", body: JSON.stringify({ phone, password }) }),
+  me: () => apiFetch("/api/auth/me"),
+
+  listProducts: (qs = "") => apiFetch(`/api/products${qs}`),
+  getProduct: (id) => apiFetch(`/api/products/${id}`),
+
+  listCategories: () => apiFetch("/api/categories"),
+
+  createOrder: (payload) => apiFetch("/api/orders", { method: "POST", body: JSON.stringify(payload) }),
+  myOrders: () => apiFetch("/api/orders/mine"),
+
+  getToken, setToken, clearToken, getUser, setUser,
+  isLoggedIn: () => !!getToken(),
+};
+
+window.api = api;

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حساب کاربری | سینا نور</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="brand-logo">
+        <span class="bulb">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.7.7 1 1.4 1 2.5h6c0-1.1.3-1.8 1-2.5A6 6 0 0 0 12 2z"/></svg>
+        </span>
+        سینا نور
+      </div>
+      <div class="step active">
+        <h1 id="userName">حساب کاربری</h1>
+        <p class="hint" id="userPhone"></p>
+
+        <h2 style="font-size:15px;margin:20px 0 8px">سفارش‌های من</h2>
+        <div id="ordersList" class="hint">در حال بارگذاری...</div>
+
+        <button type="button" class="btn btn-primary btn-block" id="logoutBtn" style="margin-top:20px">خروج از حساب</button>
+        <a href="index.html" class="edit-phone" style="display:block;text-align:center;margin-top:10px">بازگشت به فروشگاه</a>
+      </div>
+    </div>
+  </div>
+
+  <script>window.SINA_NOOR_API_BASE = "http://api.sinanoor.cyou";</script>
+  <script src="js/api.js"></script>
+  <script>
+    if (!api.isLoggedIn()) window.location.href = 'login.html';
+
+    const user = api.getUser();
+    document.getElementById('userName').textContent = user?.name || 'حساب کاربری';
+    document.getElementById('userPhone').textContent = user?.phone || '';
+
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+      api.clearToken();
+      window.location.href = 'index.html';
+    });
+
+    const fmt = n => Number(n).toLocaleString('fa-IR');
+    const STATUS_FA = { pending:'در انتظار بررسی', confirmed:'تایید شده', shipped:'ارسال شده', delivered:'تحویل شده', cancelled:'لغو شده' };
+
+    api.myOrders().then(({ orders }) => {
+      const el = document.getElementById('ordersList');
+      if (!orders.length) { el.textContent = 'هنوز سفارشی ثبت نکرده‌اید.'; return; }
+      el.innerHTML = orders.map(o => `
+        <div style="border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;text-align:right">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span>سفارش #${o.id}</span>
+            <span>${STATUS_FA[o.status] || o.status}</span>
+          </div>
+          <div style="font-size:13px;color:var(--text-2);margin-top:4px">${fmt(o.total_amount)} تومان — ${o.items.length} کالا</div>
+        </div>
+      `).join('');
+    }).catch(() => {
+      document.getElementById('ordersList').textContent = 'خطا در دریافت سفارش‌ها (بک‌اند در دسترس نیست).';
+    });
+  </script>
+</body>
+</html>

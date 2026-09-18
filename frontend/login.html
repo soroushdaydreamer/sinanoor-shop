@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ورود / ثبت‌نام | سینا نور</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+
+      <div class="brand-logo">
+        <span class="bulb">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.7.7 1 1.4 1 2.5h6c0-1.1.3-1.8 1-2.5A6 6 0 0 0 12 2z"/></svg>
+        </span>
+        سینا نور
+      </div>
+
+      <!-- ورود -->
+      <div class="step active" id="stepLogin">
+        <h1>ورود به حساب کاربری</h1>
+        <p class="hint">شماره موبایل و رمز عبور خود را وارد کنید</p>
+        <p class="form-error" id="loginError"></p>
+        <form id="loginForm">
+          <input class="field phone" name="phone" type="tel" inputmode="numeric" placeholder="0912xxxxxxx" maxlength="11" required>
+          <input class="field" name="password" type="password" placeholder="رمز عبور" minlength="6" required>
+          <button type="submit" class="btn btn-primary btn-block">ورود</button>
+        </form>
+        <button type="button" class="edit-phone" id="goRegister">حساب ندارید؟ ثبت‌نام کنید</button>
+      </div>
+
+      <!-- ثبت‌نام -->
+      <div class="step" id="stepRegister">
+        <h1>ساخت حساب کاربری</h1>
+        <p class="hint">برای خرید از سینا نور ثبت‌نام کنید</p>
+        <p class="form-error" id="registerError"></p>
+        <form id="registerForm">
+          <input class="field" name="name" type="text" placeholder="نام و نام خانوادگی" required>
+          <input class="field phone" name="phone" type="tel" inputmode="numeric" placeholder="0912xxxxxxx" maxlength="11" required>
+          <input class="field" name="password" type="password" placeholder="رمز عبور (حداقل ۶ کاراکتر)" minlength="6" required>
+          <button type="submit" class="btn btn-primary btn-block">ثبت‌نام</button>
+        </form>
+        <button type="button" class="edit-phone" id="goLogin">حساب دارید؟ وارد شوید</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script>window.SINA_NOOR_API_BASE = "http://api.sinanoor.cyou";</script>
+  <script src="js/api.js"></script>
+  <script>
+    const stepLogin = document.getElementById('stepLogin');
+    const stepRegister = document.getElementById('stepRegister');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginError = document.getElementById('loginError');
+    const registerError = document.getElementById('registerError');
+
+    // اگر از قبل وارد شده، مستقیم به صفحه اصلی برو
+    if (api.isLoggedIn()) window.location.href = 'index.html';
+
+    document.getElementById('goRegister').addEventListener('click', () => {
+      stepLogin.classList.remove('active');
+      stepRegister.classList.add('active');
+    });
+    document.getElementById('goLogin').addEventListener('click', () => {
+      stepRegister.classList.remove('active');
+      stepLogin.classList.add('active');
+    });
+
+    function afterAuth(data) {
+      api.setToken(data.token);
+      api.setUser(data.user);
+      window.location.href = 'index.html';
+    }
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.textContent = '';
+      const fd = new FormData(loginForm);
+      try {
+        const data = await api.login(fd.get('phone').trim(), fd.get('password'));
+        afterAuth(data);
+      } catch (err) {
+        loginError.textContent = err.message;
+      }
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      registerError.textContent = '';
+      const fd = new FormData(registerForm);
+      try {
+        const data = await api.register(fd.get('name').trim(), fd.get('phone').trim(), fd.get('password'));
+        afterAuth(data);
+      } catch (err) {
+        registerError.textContent = err.message;
+      }
+    });
+  </script>
+</body>
+</html>

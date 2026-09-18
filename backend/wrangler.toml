@@ -1,0 +1,22 @@
+name = "sina-noor-api"
+main = "src/index.js"
+compatibility_date = "2024-09-01"
+
+# دو ساب‌دامنه‌ی فرانت (فروشگاه) و ادمین هر دو به همین Worker وصل می‌شوند.
+# در کلادفلر داشبورد -> Workers Routes یا در اینجا زیر [[routes]] تنظیم کنید:
+# [[routes]]
+# pattern = "api.sinanoor.cyou/*"
+# zone_name = "sinanoor.cyou"
+
+[[d1_databases]]
+binding = "DB"                      # در کد با env.DB صدا زده می‌شود
+database_name = "sina-noor-db"
+database_id = "933184cf-832c-4e23-bf05-730284c2b04e"
+
+[vars]
+# مبدا(های) مجاز برای CORS - دامنه فروشگاه و ساب‌دامنه ادمین
+ALLOWED_ORIGINS = "https://sinanoor.cyou,https://www.sinanoor.cyou,https://admin.sinanoor.cyou,http://localhost:8080,http://localhost:8081"
+
+# مقادیر حساس را با wrangler secret ست کنید، نه اینجا:
+# wrangler secret put JWT_SECRET
+# wrangler secret put ADMIN_SETUP_KEY
