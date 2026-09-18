@@ -3,10 +3,26 @@ import { hashPassword, verifyPassword, signToken } from "../crypto.js";
 
 const PHONE_RE = /^09\d{9}$/;
 
+function normalizePhone(value) {
+  return String(value || "")
+    .replace(/[۰-۹]/g, digit => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace(/[\s()-]/g, "")
+    .replace(/^\+98/, "0");
+}
+
+function assertAuthConfig(env) {
+  if (!env.DB) throw new HttpError("اتصال دیتابیس تنظیم نشده است", 503);
+  if (!env.JWT_SECRET || String(env.JWT_SECRET).length < 32) {
+    throw new HttpError("کلید امنیتی ورود تنظیم نشده است", 503);
+  }
+}
+
 export async function register(request, env) {
+  assertAuthConfig(env);
   const body = await request.json().catch(() => ({}));
   const name = (body.name || "").trim();
-  const phone = (body.phone || "").trim();
+  const phone = normalizePhone(body.phone);
   const password = body.password || "";
 
   if (!name || name.length < 2) return error("نام معتبر وارد کنید");
@@ -31,8 +47,9 @@ export async function register(request, env) {
 }
 
 export async function login(request, env) {
+  assertAuthConfig(env);
   const body = await request.json().catch(() => ({}));
-  const phone = (body.phone || "").trim();
+  const phone = normalizePhone(body.phone);
   const password = body.password || "";
 
   if (!PHONE_RE.test(phone) || !password) return error("شماره موبایل یا رمز عبور نامعتبر است");
