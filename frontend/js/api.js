@@ -24,8 +24,10 @@ async function apiFetch(path, options = {}) {
 
   const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   let data;
-  try { data = await res.json(); } catch { data = { ok: false, error: "پاسخ نامعتبر از سرور" }; }
-  if (!res.ok || data.ok === false) throw new Error(data.error || "خطایی رخ داد");
+  try { data = await res.json(); } catch {
+    data = { ok: false, error: res.status === 404 ? "سرویس ثبت‌نام در دسترس نیست؛ اتصال API را بررسی کنید" : "پاسخ نامعتبر از سرور" };
+  }
+  if (!res.ok || data.ok === false) throw new Error(data.error || `خطای سرور (${res.status})`);
   return data;
 }
 
