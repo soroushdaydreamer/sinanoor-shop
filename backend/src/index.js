@@ -1,4 +1,6 @@
 import { corsHeaders, json, error, HttpError } from "./http.js";
+import { createDatabase } from "./db.js";
+
 import { register, login, me } from "./routes/auth.js";
 import {
   listProducts, getProduct, createProduct, updateProduct, deleteProduct,
@@ -43,6 +45,7 @@ const routes = [
 export default {
   async fetch(request, env) {
     const headers = corsHeaders(request, env);
+    const runtimeEnv = { ...env, DB: createDatabase(env.DATABASE_URL) };
 
     if (request.method === "OPTIONS") {
       return new Response(null, { status: 204, headers });
@@ -61,7 +64,7 @@ export default {
 
       try {
         const params = { id: match[1] };
-        const res = await handler(request, env, params);
+        const res = await handler(request, runtimeEnv, params);
         // به همه‌ی پاسخ‌های موفق هدر CORS اضافه می‌شود
         const merged = new Response(res.body, res);
         Object.entries(headers).forEach(([k, v]) => merged.headers.set(k, v));

@@ -8,10 +8,10 @@ export async function listProducts(request, env) {
   const limit = Math.min(parseInt(url.searchParams.get("limit") || "50", 10), 100);
   const offset = parseInt(url.searchParams.get("offset") || "0", 10);
 
-  let sql = "SELECT * FROM products WHERE is_active = 1";
+  let sql = "SELECT * FROM products WHERE is_active = TRUE";
   const params = [];
   if (category) { sql += " AND category_id = ?"; params.push(category); }
-  if (deal === "1") { sql += " AND is_deal = 1"; }
+  if (deal === "1") { sql += " AND is_deal = TRUE"; }
   if (q) { sql += " AND title LIKE ?"; params.push(`%${q}%`); }
   sql += " ORDER BY id DESC LIMIT ? OFFSET ?";
   params.push(limit, offset);
@@ -36,7 +36,7 @@ export async function createProduct(request, env) {
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
   ).bind(
     b.title, b.category_id || null, b.price, b.old_price || null,
-    b.stock ?? 0, b.image_url || null, b.is_deal ? 1 : 0, b.is_active === false ? 0 : 1
+    b.stock ?? 0, b.image_url || null, Boolean(b.is_deal), b.is_active !== false
   ).run();
 
   return json({ ok: true, id: result.meta.last_row_id });
@@ -53,7 +53,7 @@ export async function updateProduct(request, env, params) {
      WHERE id=?`
   ).bind(
     b.title, b.category_id || null, b.price, b.old_price || null,
-    b.stock ?? 0, b.image_url || null, b.is_deal ? 1 : 0, b.is_active === false ? 0 : 1,
+    b.stock ?? 0, b.image_url || null, Boolean(b.is_deal), b.is_active !== false,
     params.id
   ).run();
 
