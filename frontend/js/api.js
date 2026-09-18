@@ -1,6 +1,13 @@
 // کلاینت ساده برای ارتباط با API بک‌اند (Cloudflare Workers)
 // آدرس API را قبل از انتشار نهایی با دامنه‌ی واقعی خودتان جایگزین کنید.
-const API_BASE = window.SINA_NOOR_API_BASE || "https://api.sinanoor.com";
+const API_BASE = (window.SINA_NOOR_API_BASE || "https://api.sinanoor.cyou").replace(/\\/$/, "");
+
+function normalizePhone(phone) {
+  return String(phone || "")
+    .replace(/[۰-۹]/g, digit => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
+    .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+    .replace(/\\s|[-()]/g, "");
+}
 
 function getToken() { return localStorage.getItem("sn_token"); }
 function setToken(t) { localStorage.setItem("sn_token", t); }
@@ -24,9 +31,9 @@ async function apiFetch(path, options = {}) {
 
 const api = {
   register: (name, phone, password) =>
-    apiFetch("/api/auth/register", { method: "POST", body: JSON.stringify({ name, phone, password }) }),
+    apiFetch("/api/auth/register", { method: "POST", body: JSON.stringify({ name, phone: normalizePhone(phone), password }) }),
   login: (phone, password) =>
-    apiFetch("/api/auth/login", { method: "POST", body: JSON.stringify({ phone, password }) }),
+    apiFetch("/api/auth/login", { method: "POST", body: JSON.stringify({ phone: normalizePhone(phone), password }) }),
   me: () => apiFetch("/api/auth/me"),
 
   listProducts: (qs = "") => apiFetch(`/api/products${qs}`),
