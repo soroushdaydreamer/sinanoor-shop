@@ -15,7 +15,7 @@ database_id = "933184cf-832c-4e23-bf05-730284c2b04e"
 
 [vars]
 # مبدا(های) مجاز برای CORS - دامنه فروشگاه و ساب‌دامنه ادمین
-ALLOWED_ORIGINS = "https://sinanoor.cyou,https://www.sinanoor.cyou,https://admin.sinanoor.cyou,http://localhost:8080,http://localhost:8081"
+ALLOWED_ORIGINS = "https://sinanoor.cyou,https://www.sinanoor.cyou,https://admin.sinanoor.cyou"
 
 # مقادیر حساس را با wrangler secret ست کنید، نه اینجا:
 # wrangler secret put JWT_SECRET
