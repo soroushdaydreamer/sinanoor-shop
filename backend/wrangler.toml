@@ -8,10 +8,7 @@ compatibility_date = "2024-09-01"
 # pattern = "api.sinanoor.cyou/*"
 # zone_name = "sinanoor.cyou"
 
-[[d1_databases]]
-binding = "DB"                      # در کد با env.DB صدا زده می‌شود
-database_name = "sina-noor-db"
-database_id = "933184cf-832c-4e23-bf05-730284c2b04e"
+# Database is Neon PostgreSQL. Configure DATABASE_URL as a Worker secret.
 
 [vars]
 # مبدا(های) مجاز برای CORS - دامنه فروشگاه و ساب‌دامنه ادمین

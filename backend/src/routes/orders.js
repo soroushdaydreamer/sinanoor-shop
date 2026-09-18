@@ -14,7 +14,7 @@ export async function createOrder(request, env) {
   let total = 0;
   const resolvedItems = [];
   for (const it of items) {
-    const product = await env.DB.prepare("SELECT id, title, price, stock FROM products WHERE id = ? AND is_active = 1")
+    const product = await env.DB.prepare("SELECT id, title, price, stock FROM products WHERE id = ? AND is_active = TRUE")
       .bind(it.product_id).first();
     if (!product) return error(`محصول با شناسه ${it.product_id} یافت نشد`, 404);
     const qty = Math.max(1, parseInt(it.qty || 1, 10));
