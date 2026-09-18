@@ -9,6 +9,10 @@ compatibility_date = "2024-09-01"
 # zone_name = "sinanoor.cyou"
 
 # Database is Neon PostgreSQL. Configure DATABASE_URL as a Worker secret.
+# Bind the Worker to the API hostname so auth requests reach this worker.
+[[routes]]
+pattern = "api.sinanoor.cyou/*"
+zone_name = "sinanoor.cyou"
 
 [vars]
 # مبدا(های) مجاز برای CORS - دامنه فروشگاه و ساب‌دامنه ادمین
