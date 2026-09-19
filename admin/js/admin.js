@@ -4,7 +4,7 @@ const whoAmI = document.getElementById('whoAmI');
 const modalOverlay = document.getElementById('modalOverlay');
 const modalBox = document.getElementById('modalBox');
 
-const TITLES = { products: 'محصولات', categories: 'دسته‌بندی‌ها', orders: 'سفارش‌ها', users: 'کاربران' };
+const TITLES = { products: 'محصولات', categories: 'دسته‌بندی‌ها', orders: 'سفارش‌ها', users: 'کاربران', settings: 'تنظیمات سایت' };
 const fmt = n => Number(n).toLocaleString('fa-IR');
 let categoriesCache = [];
 
@@ -29,6 +29,7 @@ async function router() {
     else if (tab === 'categories') await renderCategories();
     else if (tab === 'orders') await renderOrders();
     else if (tab === 'users') await renderUsers();
+    else if (tab === 'settings') await renderSettings();
     else content.innerHTML = '<div class="empty">صفحه یافت نشد</div>';
   } catch (err) {
     content.innerHTML = `<div class="empty">خطا: ${err.message}</div>`;
@@ -102,6 +103,7 @@ function openProductForm(p) {
         <input class="field" name="old_price" type="number" placeholder="قیمت قبل (اختیاری)" value="${p?.old_price || ''}">
         <input class="field" name="stock" type="number" placeholder="موجودی" value="${p?.stock ?? 0}">
         <input class="field" name="image_url" placeholder="آدرس تصویر (اختیاری)" value="${p?.image_url || ''}">
+        <input class="field" name="image_file" type="file" accept="image/*">
       </div>
       <label style="font-size:13px;display:flex;align-items:center;gap:6px;margin-bottom:10px">
         <input type="checkbox" name="is_deal" ${p?.is_deal ? 'checked' : ''}> نمایش در «پیشنهاد شگفت‌انگیز»
@@ -126,6 +128,8 @@ function openProductForm(p) {
       is_deal: fd.get('is_deal') === 'on',
     };
     try {
+      const imageFile = fd.get('image_file');
+      if (imageFile && imageFile.size) payload.image_url = (await api.uploadImage(imageFile)).url;
       if (p) await api.updateProduct(p.id, payload); else await api.createProduct(payload);
       closeModal();
       router();
@@ -171,7 +175,7 @@ async function renderCategories() {
 
 function openCategoryForm(c) {
   openModal(`
-    <h2>${c ? 'ویرایش دسته‌بندی' : 'دسته‌بندی جدید'}</h2>
+    <h2>${c ? 'ویرای�� دسته‌بندی' : 'دسته‌بندی جدید'}</h2>
     <p class="form-error" id="formError"></p>
     <form id="catForm">
       <input class="field" name="name" placeholder="نام دسته‌بندی" value="${c?.name || ''}" required>
@@ -268,6 +272,33 @@ async function renderUsers() {
     if (!confirm('این کاربر حذف شود؟')) return;
     try { await api.deleteUser(btn.dataset.del); router(); } catch (err) { alert(err.message); }
   }));
+}
+
+// ===================== تنظیمات سایت =====================
+async function renderSettings() {
+  const { settings } = await api.getSettings();
+  content.innerHTML = `
+    <div class="card">
+      <p class="form-error" id="settingsError"></p>
+      <form id="settingsForm">
+        <div class="form-grid">
+          <input class="field" name="store_name" placeholder="نام فروشگاه" value="${settings.store_name || ''}" required>
+          <input class="field" name="contact_phone" placeholder="شماره تماس" value="${settings.contact_phone || ''}">
+          <input class="field" name="contact_whatsapp" placeholder="واتساپ" value="${settings.contact_whatsapp || ''}">
+          <input class="field" name="contact_email" type="email" placeholder="ایمیل" value="${settings.contact_email || ''}">
+          <input class="field" name="instagram_url" placeholder="لینک اینستاگرام" value="${settings.instagram_url || ''}">
+        </div>
+        <textarea class="field" name="contact_address" rows="4" placeholder="آدرس فروشگاه">${settings.contact_address || ''}</textarea>
+        <button class="btn btn-primary" type="submit">ذخیره اطلاعات تماس</button>
+      </form>
+    </div>
+  `;
+  document.getElementById('settingsForm').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(event.target));
+    try { await api.updateSettings(data); alert('تنظیمات ذخیره شد'); }
+    catch (err) { document.getElementById('settingsError').textContent = err.message; }
+  });
 }
 
 // ===================== شروع =====================

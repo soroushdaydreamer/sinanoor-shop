@@ -38,6 +38,19 @@ const api = {
   listUsers: () => apiFetch("/api/admin/users"),
   updateUserRole: (id, role) => apiFetch(`/api/admin/users/${id}`, { method: "PATCH", body: JSON.stringify({ role }) }),
   deleteUser: (id) => apiFetch(`/api/admin/users/${id}`, { method: "DELETE" }),
+  getSettings: () => apiFetch("/api/settings"),
+  updateSettings: (settings) => apiFetch("/api/admin/settings", { method: "PUT", body: JSON.stringify(settings) }),
+  uploadImage: async (file) => {
+    const form = new FormData();
+    form.append("file", file);
+    const headers = {};
+    const token = getToken();
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const res = await fetch(`${API_BASE}/api/admin/uploads`, { method: "POST", headers, body: form });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) throw new Error(data.error || "آپلود تصویر ناموفق بود");
+    return data;
+  },
 
   getToken, setToken, clearToken, getUser, setUser,
   isLoggedIn: () => !!getToken(),

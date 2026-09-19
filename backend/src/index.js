@@ -14,6 +14,8 @@ import {
 import {
   listUsersAdmin, updateUserRoleAdmin, deleteUserAdmin,
 } from "./routes/users.js";
+import { getSettings, updateSettings } from "./routes/settings.js";
+import { uploadImage } from "./routes/uploads.js";
 
 // [متد, regex مسیر, هندلر]  — گروه‌های regex به عنوان params.id پاس داده می‌شوند
 const routes = [
@@ -40,6 +42,10 @@ const routes = [
   ["GET", /^\/api\/admin\/users$/, listUsersAdmin],
   ["PATCH", /^\/api\/admin\/users\/(\d+)$/, updateUserRoleAdmin],
   ["DELETE", /^\/api\/admin\/users\/(\d+)$/, deleteUserAdmin],
+
+  ["GET", /^\/api\/settings$/, getSettings],
+  ["PUT", /^\/api\/admin\/settings$/, updateSettings],
+  ["POST", /^\/api\/admin\/uploads$/, uploadImage],
 ];
 
 export default {

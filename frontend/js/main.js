@@ -120,6 +120,29 @@ async function loadProducts(){
 
 loadProducts();
 
+async function loadSiteSettings() {
+  try {
+    const response = await fetch('/api/settings');
+    const { settings } = await response.json();
+    if (!settings) return;
+    document.querySelectorAll('[data-contact-phone]').forEach((el) => {
+      el.textContent = settings.contact_phone || el.textContent;
+      if (el.tagName === 'A' && settings.contact_phone) el.href = `tel:${settings.contact_phone}`;
+    });
+    document.querySelectorAll('[data-contact-address]').forEach((el) => { el.textContent = settings.contact_address || el.textContent; });
+    document.querySelectorAll('[data-contact-whatsapp]').forEach((el) => {
+      if (settings.contact_whatsapp) el.href = settings.contact_whatsapp.startsWith('http') ? settings.contact_whatsapp : `https://wa.me/${settings.contact_whatsapp}`;
+    });
+    document.querySelectorAll('[data-contact-email]').forEach((el) => {
+      el.textContent = settings.contact_email || el.textContent;
+      if (el.tagName === 'A' && settings.contact_email) el.href = `mailto:${settings.contact_email}`;
+    });
+  } catch (error) {
+    // اطلاعات پیش‌فرض صفحه در صورت در دسترس نبودن API حفظ می‌شود.
+  }
+}
+loadSiteSettings();
+
 // ===== وضعیت ورود در هدر و ناوبری پایین =====
 (function reflectAuthState(){
   if (!window.api || !api.isLoggedIn()) return;

@@ -19,8 +19,16 @@ export default async function handler(req, res) {
   }
 
   const request = new Request(`https://${req.headers.host || "localhost"}${req.url}`, init);
-  const response = await worker.fetch(request, process.env);
-  res.statusCode = response.status;
-  response.headers.forEach((value, key) => res.setHeader(key, value));
-  res.end(Buffer.from(await response.arrayBuffer()));
+  try {
+    const response = await worker.fetch(request, process.env);
+    res.statusCode = response.status;
+    response.headers.forEach((value, key) => res.setHeader(key, value));
+    res.end(Buffer.from(await response.arrayBuffer()));
+  } catch (error) {
+    console.error("[v0] API request failed", error);
+    res.statusCode = 500;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify({ ok: false, error: "اتصال سرویس احراز هویت برقرار نیست" }));
+  }
+  return;
 }
