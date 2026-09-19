@@ -124,7 +124,7 @@ loadProducts();
 (function reflectAuthState(){
   if (!window.api || !api.isLoggedIn()) return;
   const user = api.getUser();
-  document.querySelectorAll('a[href="login.html"]').forEach(el => {
+  document.querySelectorAll('a[href="login.html"], a[href="/login.html"]').forEach(el => {
     if (el.closest('.bottom-nav') || el.closest('.icon-btn')) {
       el.href = 'account.html';
       if (el.textContent.includes('ورود')) el.textContent = user?.name ? user.name.split(' ')[0] : 'حساب من';
