@@ -12,7 +12,7 @@ function normalizePhone(value) {
 }
 
 function assertAuthConfig(env) {
-  if (!env.DB) throw new HttpError("اتصال دیتابیس تنظیم نشده است", 503);
+  if (!env.DATABASE_URL || !env.DB) throw new HttpError("اتصال Neon تنظیم نشده است؛ DATABASE_URL را در Vercel اضافه کنید", 503);
   if (!env.JWT_SECRET || String(env.JWT_SECRET).length < 32) {
     throw new HttpError("کلید امنیتی ورود تنظیم نشده است", 503);
   }
