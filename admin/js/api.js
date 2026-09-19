@@ -1,5 +1,5 @@
 // کلاینت API پنل مدیریت — به همان بک‌اند Cloudflare Workers وصل می‌شود
-const API_BASE = window.SINA_NOOR_API_BASE || "https://api.sinanoor.com";
+const API_BASE = window.SINA_NOOR_API_BASE || "/api";
 
 function getToken() { return localStorage.getItem("sn_admin_token"); }
 function setToken(t) { localStorage.setItem("sn_admin_token", t); }

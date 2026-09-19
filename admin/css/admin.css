@@ -58,3 +58,22 @@ select.field{background:#fff}
 .modal h2{margin:0 0 12px;font-size:16px}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
 .empty{color:var(--text-2);font-size:13px;padding:20px;text-align:center}
+
+@media (max-width: 720px){
+  .app{display:block}
+  .sidebar{width:100%;padding:12px;position:sticky;top:0;z-index:20}
+  .sidebar .logo{margin:0 0 10px;font-size:15px}
+  .sidebar nav{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+  .sidebar nav a{white-space:nowrap;margin:0;padding:10px 12px;min-height:44px;display:flex;align-items:center}
+  .sidebar .logout{position:absolute;left:12px;top:12px;margin:0;padding:10px;min-height:44px}
+  .main{padding:16px 12px}
+  .topbar{align-items:flex-start;gap:10px}
+  .topbar .who{font-size:12px;text-align:left;max-width:45%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card{padding:10px;overflow-x:auto}
+  table{min-width:680px}
+  .toolbar .btn{min-height:44px}
+  .modal{margin:12px;padding:16px;max-height:calc(100vh - 24px)}
+  .form-grid{grid-template-columns:1fr}
+  .btn{min-height:44px}
+  .field{font-size:16px;min-height:44px}
+}
