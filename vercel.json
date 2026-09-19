@@ -5,8 +5,7 @@
     { "source": "/account", "destination": "/frontend/account.html" },
     { "source": "/cart", "destination": "/frontend/cart.html" },
     { "source": "/css/:path*", "destination": "/frontend/css/:path*" },
-    { "source": "/js/:path*", "destination": "/frontend/js/:path*" },
-    { "source": "/admin/:path*", "destination": "/admin/:path*" }
+    { "source": "/js/:path*", "destination": "/frontend/js/:path*" }
   ],
   "headers": [
     {

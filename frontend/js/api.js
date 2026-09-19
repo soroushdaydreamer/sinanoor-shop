@@ -1,12 +1,11 @@
-// کلاینت ساده برای ارتباط با API بک‌اند (Cloudflare Workers)
-// آدرس API را قبل از انتشار نهایی با دامنه‌ی واقعی خودتان جایگزین کنید.
-const API_BASE = (window.SINA_NOOR_API_BASE || "https://api.sinanoor.cyou").replace(/\\/$/, "");
+// API روی همان دامنه سایت اجرا می‌شود تا تنظیمات جداگانه دامنه و CORS لازم نباشد.
+const API_BASE = (window.SINA_NOOR_API_BASE || "").replace(/\/$/, "");
 
 function normalizePhone(phone) {
   return String(phone || "")
     .replace(/[۰-۹]/g, digit => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)))
     .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
-    .replace(/\\s|[-()]/g, "");
+    .replace(/[\s-()]/g, "");
 }
 
 function getToken() { return localStorage.getItem("sn_token"); }
